@@ -26,10 +26,10 @@ public class AccountService {
 	}
 
 	public void open(AccountRequisites requisites) {
-		enrichAccountRequisites(requisites);
+		AccountRequisites enrichedRequisites = enrichAccountRequisites(requisites);
 		int accountNumber = numberCapacityRepository.getNumber();
-		Account account = new Account(requisites, accountNumber);
-		Transaction openTransaction = createOpenTransaction(requisites, account);
+		Account account = new Account(enrichedRequisites, accountNumber);
+		Transaction openTransaction = createOpenTransaction(enrichedRequisites, account);
 		accountRepository.save(account);
 		transactionRepository.save(openTransaction);
 	}
@@ -37,10 +37,10 @@ public class AccountService {
 	public void deposit(TransactionRequisites requisites) {
 		Account account = findByNumber(requisites.getAccountRecepient().getNumber());
 		synchronized(account) {
-			enrichDepositTransaction(requisites, account);
-			account.deposit(requisites.getAmount());
-			completeDepositTransaction(requisites, account);
-			Transaction deposit = new Transaction(requisites);
+			TransactionRequisites enrichedRequisites = enrichDepositTransaction(requisites, account);
+			account.deposit(enrichedRequisites.getAmount());
+			TransactionRequisites completedRequisites = completeDepositTransaction(enrichedRequisites, account);
+			Transaction deposit = new Transaction(completedRequisites);
 			accountRepository.update(account);
 			transactionRepository.save(deposit);
 		}
@@ -49,10 +49,10 @@ public class AccountService {
 	public void withdraw(TransactionRequisites requisites) {
 		Account account = findByNumber(requisites.getAccountFrom().getNumber());
 		synchronized(account) {
-			enrichWithdrawTransaction(requisites, account);
-			account.withdraw(requisites.getAmount());
-			completeWithdrawTransaction(requisites, account);
-			Transaction withdraw = new Transaction(requisites);
+			TransactionRequisites enrichedRequisites = enrichWithdrawTransaction(requisites, account);
+			account.withdraw(enrichedRequisites.getAmount());
+			TransactionRequisites completedRequisites = completeWithdrawTransaction(enrichedRequisites, account);
+			Transaction withdraw = new Transaction(completedRequisites);
 			transactionRepository.save(withdraw);
 			accountRepository.update(account);
 		}
@@ -93,44 +93,49 @@ public class AccountService {
 		return openTransaction;
 	}
 
-	private void enrichAccountRequisites(AccountRequisites requisites) {
+	private AccountRequisites enrichAccountRequisites(AccountRequisites requisites) {
 		Optional<Client> initiator = clientRepository.findByPassport(requisites.getTransaction().getClient().getPassport());
 		if (initiator.isPresent()) {
 			requisites.getTransaction().setClient(initiator.get());
+			return requisites;
 		} else {
 			throw new IllegalArgumentException("There is no such client");
 		}
 	}
 	
-	private void completeDepositTransaction(TransactionRequisites requisites, Account account) {
+	private TransactionRequisites completeDepositTransaction(TransactionRequisites requisites, Account account) {
 		requisites.setBalanceAfter(account.getBalance());
 		requisites.setHistoryNumber(account.getLastTransactionNumber());
+		return requisites;
 	}
 
-	private void enrichDepositTransaction(TransactionRequisites requisites, Account account) {
+	private TransactionRequisites enrichDepositTransaction(TransactionRequisites requisites, Account account) {
 		Optional<Client> client = clientRepository.findByPassport(requisites.getClient().getPassport());
 		if (client.isPresent()) {
 			requisites.setAccount(account);
 			requisites.setAccountRecepient(account);
 			requisites.setBalanceBefore(account.getBalance());
 			requisites.setClient(client.get());
+			return requisites;
 		} else {
 			throw new IllegalArgumentException("There is no such client");
 		}
 	}
 	
-	private void completeWithdrawTransaction(TransactionRequisites requisites, Account account) {
+	private TransactionRequisites completeWithdrawTransaction(TransactionRequisites requisites, Account account) {
 		requisites.setBalanceAfter(account.getBalance());
 		requisites.setHistoryNumber(account.getLastTransactionNumber());
+		return requisites;
 	}
 
-	private void enrichWithdrawTransaction(TransactionRequisites requisites, Account account) {
+	private TransactionRequisites enrichWithdrawTransaction(TransactionRequisites requisites, Account account) {
 		Optional<Client> client = clientRepository.findByPassport(requisites.getClient().getPassport());
 		if (client.isPresent()) {
 			requisites.setAccount(account);
 			requisites.setAccountFrom(account);
 			requisites.setBalanceBefore(account.getBalance());
 			requisites.setClient(client.get());
+			return requisites;
 		} else {
 			throw new IllegalArgumentException("There is no such client");
 		}

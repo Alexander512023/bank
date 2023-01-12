@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import com.goryaninaa.web.Bank.DAOConcurentStub.AccountDAO;
-import com.goryaninaa.web.Bank.cache.Cache;
-import com.goryaninaa.web.Bank.cache.CacheKey;
-import com.goryaninaa.web.Bank.cache.CacheKeyFactory;
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 import com.goryaninaa.web.Bank.service.account.AccountRepository;
 import com.goryaninaa.web.Bank.service.account.TransactionRepository;
+import com.goryaninaa.web.Cache.Cache;
+import com.goryaninaa.web.Cache.CacheKey;
+import com.goryaninaa.web.Cache.CacheKeyFactory;
 
 public class AccountRepositoryCached implements AccountRepository {
 

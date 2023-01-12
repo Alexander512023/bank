@@ -3,9 +3,9 @@ package com.goryaninaa.web.Bank.DAOConcurentStub;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.goryaninaa.web.Bank.cache.DAO;
-import com.goryaninaa.web.Bank.cache.DataAccessStrategy;
 import com.goryaninaa.web.Bank.model.account.Account;
+import com.goryaninaa.web.Cache.DAO;
+import com.goryaninaa.web.Cache.DataAccessStrategy;
 
 public class AccountDAO extends DAO<Account> {
 	

@@ -1,7 +1,7 @@
 package com.goryaninaa.web.Bank.repository;
 
-import com.goryaninaa.web.Bank.cache.KeyExtractStrategy;
 import com.goryaninaa.web.Bank.model.account.Account;
+import com.goryaninaa.web.Cache.KeyExtractStrategy;
 
 public class AccountNumberExtractStrategy implements KeyExtractStrategy {
 

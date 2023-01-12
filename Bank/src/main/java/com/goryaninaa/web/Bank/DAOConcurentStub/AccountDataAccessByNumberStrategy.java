@@ -3,9 +3,9 @@ package com.goryaninaa.web.Bank.DAOConcurentStub;
 import java.util.List;
 import java.util.Optional;
 
-import com.goryaninaa.web.Bank.cache.DataAccessStrategy;
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.repository.AccountAccessStrategyType;
+import com.goryaninaa.web.Cache.DataAccessStrategy;
 
 public class AccountDataAccessByNumberStrategy implements DataAccessStrategy {
 
