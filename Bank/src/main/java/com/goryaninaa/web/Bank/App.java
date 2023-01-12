@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.goryaninaa.logger.LoggingMech.Level;
@@ -68,10 +69,10 @@ public class App {
 		List<Controller> controllers = new ArrayList<>();
 		controllers.add(balanceController);
 
-		String propertiesPath = "/Users/alexandrgoryanin/temp/application.properties";
-		
 		try {
-			HttpServer httpServer = new HttpServer(propertiesPath, controllers);
+			Properties properties = new Properties();
+			properties.load(App.class.getResourceAsStream("/config.properties"));
+			HttpServer httpServer = new HttpServer(properties, controllers);
 			httpServer.start();
 		} catch (IOException e) {
 			e.printStackTrace();
