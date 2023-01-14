@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.goryaninaa.web.Bank.DTO.AccountDTO;
-import com.goryaninaa.web.Bank.DTO.AccountRequisitesDTO;
+import com.goryaninaa.web.Bank.DTO.AccountOpenRequisitesDTO;
 import com.goryaninaa.web.Bank.DTO.ClientDTO;
 import com.goryaninaa.web.Bank.DTO.TransactionDTO;
 import com.goryaninaa.web.Bank.model.account.Account;
-import com.goryaninaa.web.Bank.model.account.AccountRequisites;
+import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 import com.goryaninaa.web.Bank.model.transaction.TransactionRequisites;
 import com.goryaninaa.web.Bank.service.account.AccountService;
@@ -23,7 +23,7 @@ import com.goryaninaa.web.HttpServer.requesthandler.annotation.GetMapping;
 import com.goryaninaa.web.HttpServer.requesthandler.annotation.PostMapping;
 import com.goryaninaa.web.HttpServer.requesthandler.annotation.RequestMapping;
 
-@RequestMapping("/balance")
+@RequestMapping("/account")
 public class AccountController implements Controller {
 
 	private final AccountService accountService;
@@ -33,8 +33,8 @@ public class AccountController implements Controller {
 	}
 	
 	@PostMapping("/open")
-	public Response open(HttpRequest request, AccountRequisitesDTO requisitesDTO) {
-		AccountRequisites accountRequisites = requisitesDTO.extractAccountRequisites();
+	public Response open(HttpRequest request, AccountOpenRequisitesDTO requisitesDTO) {
+		AccountOpenRequisites accountRequisites = requisitesDTO.extractAccountRequisites();
 		accountService.open(accountRequisites);
 		return new HttpResponse(HttpResponseCode.OK);
 	}

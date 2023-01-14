@@ -3,7 +3,7 @@ package com.goryaninaa.web.Bank.service.account;
 import java.util.Optional;
 
 import com.goryaninaa.web.Bank.model.account.Account;
-import com.goryaninaa.web.Bank.model.account.AccountRequisites;
+import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
 import com.goryaninaa.web.Bank.model.client.Client;
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 import com.goryaninaa.web.Bank.model.transaction.TransactionRequisites;
@@ -25,8 +25,8 @@ public class AccountService {
 		this.clientRepository = clientRepository;
 	}
 
-	public void open(AccountRequisites requisites) {
-		AccountRequisites enrichedRequisites = enrichAccountRequisites(requisites);
+	public void open(AccountOpenRequisites requisites) {
+		AccountOpenRequisites enrichedRequisites = enrichAccountRequisites(requisites);
 		int accountNumber = numberCapacityRepository.getNumber();
 		Account account = new Account(enrichedRequisites, accountNumber);
 		Transaction openTransaction = createOpenTransaction(enrichedRequisites, account);
@@ -86,14 +86,14 @@ public class AccountService {
 //		}
 //	}
 
-	private Transaction createOpenTransaction(AccountRequisites requisites, Account account) {
+	private Transaction createOpenTransaction(AccountOpenRequisites requisites, Account account) {
 		Transaction openTransaction = requisites.getTransaction();
 		openTransaction.setAccount(account);
 		openTransaction.setAccountRecepient(account);
 		return openTransaction;
 	}
 
-	private AccountRequisites enrichAccountRequisites(AccountRequisites requisites) {
+	private AccountOpenRequisites enrichAccountRequisites(AccountOpenRequisites requisites) {
 		Optional<Client> initiator = clientRepository.findByPassport(requisites.getTransaction().getClient().getPassport());
 		if (initiator.isPresent()) {
 			requisites.getTransaction().setClient(initiator.get());

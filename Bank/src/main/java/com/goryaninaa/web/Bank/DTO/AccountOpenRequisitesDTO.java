@@ -1,12 +1,12 @@
 package com.goryaninaa.web.Bank.DTO;
 
-import com.goryaninaa.web.Bank.model.account.AccountRequisites;
+import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
 import com.goryaninaa.web.Bank.model.account.AccountType;
 import com.goryaninaa.web.Bank.model.client.Client;
 import com.goryaninaa.web.Bank.model.transaction.ServiceInitiator;
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 
-public class AccountRequisitesDTO {
+public class AccountOpenRequisitesDTO {
 	
 	private int amount;
 	private ClientDTO clientDTO;
@@ -14,15 +14,15 @@ public class AccountRequisitesDTO {
 	private ServiceInitiator service;
 	private int term;
 	
-	public AccountRequisitesDTO() {
+	public AccountOpenRequisitesDTO() {
 		
 	}
 	
-	public AccountRequisites extractAccountRequisites() {
+	public AccountOpenRequisites extractAccountRequisites() {
 		Client client = new Client(clientDTO.getPassport());
 		Transaction transaction = new Transaction(amount, client, service);
 		
-		return new AccountRequisites(transaction, accountType, term);
+		return new AccountOpenRequisites(transaction, accountType, term);
 	}
 
 	public int getAmount() {

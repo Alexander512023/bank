@@ -32,7 +32,7 @@ public class Account implements Comparable<Account> {
 		this.number = number;
 	}
 	
-	public Account(AccountRequisites requisites, int number) {
+	public Account(AccountOpenRequisites requisites, int number) {
 		setLastTransactionNumber(1);
 		setBalance(requisites.getTransaction().getAmount());
 		setNumber(number);

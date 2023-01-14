@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.goryaninaa.logger.LoggingMech.Level;
 import com.goryaninaa.logger.LoggingMech.LoggingMech;
 import com.goryaninaa.web.Bank.DAOConcurentStub.AccountDAO;
 import com.goryaninaa.web.Bank.DAOConcurentStub.AccountDataAccessByNumberStrategy;
@@ -35,43 +34,41 @@ public class App {
 
 	public static void main(String[] args) {
 		Client client = new Client(1, "36 10 000001", "Alex", "Goryanin", "30.10.1989");
-		
-		String logsPath = "/Users/alexandrgoryanin/temp/bank/logs";
-		LoggingMech.getInstance().initFSA(logsPath, 10000, 10);
-		LoggingMech.getInstance().setLevel(Level.DEBUG);
-		LoggingMech.getInstance().startLogging();
-				
-		DataAccessStrategy accountDataAccessByNumber = new AccountDataAccessByNumberStrategy();
-		Map<String, DataAccessStrategy> accountDataAccesses = new ConcurrentHashMap<>();
-		accountDataAccesses.put(accountDataAccessByNumber.getStrategy(), accountDataAccessByNumber);
-		AccountDAO accountDAO = new AccountDAO(accountDataAccesses);
-		Cache<Account> accountCache = new Cache<>(accountDAO, 5);
-		ClientDAO clientDAO = new ClientDAO();
-		NumberCapacity numberCapacity = new NumberCapacity();
-		TransactionDAO depositDAO = new TransactionDAO();
-		TransactionRepositoryPOJO transactionRepository = new TransactionRepositoryPOJO(depositDAO);
-		KeyExtractStrategy accountNumberExtractStrategy = new AccountNumberExtractStrategy();
-		Map<String, KeyExtractStrategy> accountKeyExtractStrategies = new ConcurrentHashMap<>();
-		accountKeyExtractStrategies.put(accountNumberExtractStrategy.getStrategy(), accountNumberExtractStrategy);
-		CacheKeyFactory accountCacheKeyFactory = new CacheKeyFactory(accountKeyExtractStrategies);
-		AccountRepository accountRepository = new AccountRepositoryCached(accountCache, accountDAO,
-				transactionRepository, accountCacheKeyFactory);
-		
-		clientDAO.save(client);
-		
-		ClientRepositoryPOJO clientRepository = new ClientRepositoryPOJO(clientDAO);
-		NumberCapacityRepositoryPOJO numberCapacityRepository = new NumberCapacityRepositoryPOJO(numberCapacity);
-		
-		AccountService balanceService = new AccountService(accountRepository, transactionRepository,
-				numberCapacityRepository, clientRepository);
-		Controller balanceController = new AccountController(balanceService);
-
-		List<Controller> controllers = new ArrayList<>();
-		controllers.add(balanceController);
-
 		try {
 			Properties properties = new Properties();
 			properties.load(App.class.getResourceAsStream("/config.properties"));
+			
+			LoggingMech.getInstance().apply(properties);
+			LoggingMech.getInstance().startLogging();
+					
+			DataAccessStrategy accountDataAccessByNumber = new AccountDataAccessByNumberStrategy();
+			Map<String, DataAccessStrategy> accountDataAccesses = new ConcurrentHashMap<>();
+			accountDataAccesses.put(accountDataAccessByNumber.getStrategy(), accountDataAccessByNumber);
+			AccountDAO accountDAO = new AccountDAO(accountDataAccesses);
+			Cache<Account> accountCache = new Cache<>(accountDAO, properties);
+			ClientDAO clientDAO = new ClientDAO();
+			NumberCapacity numberCapacity = new NumberCapacity();
+			TransactionDAO depositDAO = new TransactionDAO();
+			TransactionRepositoryPOJO transactionRepository = new TransactionRepositoryPOJO(depositDAO);
+			KeyExtractStrategy accountNumberExtractStrategy = new AccountNumberExtractStrategy();
+			Map<String, KeyExtractStrategy> accountKeyExtractStrategies = new ConcurrentHashMap<>();
+			accountKeyExtractStrategies.put(accountNumberExtractStrategy.getStrategy(), accountNumberExtractStrategy);
+			CacheKeyFactory accountCacheKeyFactory = new CacheKeyFactory(accountKeyExtractStrategies);
+			AccountRepository accountRepository = new AccountRepositoryCached(accountCache, accountDAO,
+					transactionRepository, accountCacheKeyFactory);
+			
+			clientDAO.save(client);
+			
+			ClientRepositoryPOJO clientRepository = new ClientRepositoryPOJO(clientDAO);
+			NumberCapacityRepositoryPOJO numberCapacityRepository = new NumberCapacityRepositoryPOJO(numberCapacity);
+			
+			AccountService balanceService = new AccountService(accountRepository, transactionRepository,
+					numberCapacityRepository, clientRepository);
+			Controller balanceController = new AccountController(balanceService);
+	
+			List<Controller> controllers = new ArrayList<>();
+			controllers.add(balanceController);
+			
 			HttpServer httpServer = new HttpServer(properties, controllers);
 			httpServer.start();
 		} catch (IOException e) {

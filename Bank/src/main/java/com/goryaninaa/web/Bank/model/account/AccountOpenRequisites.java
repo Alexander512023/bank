@@ -2,15 +2,15 @@ package com.goryaninaa.web.Bank.model.account;
 
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 
-public class AccountRequisites {
+public class AccountOpenRequisites {
 	private Transaction transaction;
 	private AccountType accountType;
 	private int term;
 	
-	public AccountRequisites() {
+	public AccountOpenRequisites() {
 	}
 
-	public AccountRequisites(Transaction transaction, AccountType accountType, int term) {
+	public AccountOpenRequisites(Transaction transaction, AccountType accountType, int term) {
 		super();
 		this.transaction = transaction;
 		this.accountType = accountType;
