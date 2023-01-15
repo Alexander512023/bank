@@ -62,12 +62,12 @@ public class App {
 			ClientRepositoryPOJO clientRepository = new ClientRepositoryPOJO(clientDAO);
 			NumberCapacityRepositoryPOJO numberCapacityRepository = new NumberCapacityRepositoryPOJO(numberCapacity);
 			
-			AccountService balanceService = new AccountService(accountRepository, transactionRepository,
+			AccountService accountService = new AccountService(accountRepository, transactionRepository,
 					numberCapacityRepository, clientRepository);
-			Controller balanceController = new AccountController(balanceService);
+			Controller accountController = new AccountController(accountService);
 	
 			List<Controller> controllers = new ArrayList<>();
-			controllers.add(balanceController);
+			controllers.add(accountController);
 			
 			HttpServer httpServer = new HttpServer(properties, controllers);
 			httpServer.start();
