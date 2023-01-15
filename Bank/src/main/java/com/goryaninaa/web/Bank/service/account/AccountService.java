@@ -7,6 +7,11 @@ import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
 import com.goryaninaa.web.Bank.model.client.Client;
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 import com.goryaninaa.web.Bank.model.transaction.TransactionRequisites;
+import com.goryaninaa.web.Bank.service.account.exception.AccountDepositException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountFindException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountOpenException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountTransferException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountWithdrawException;
 import com.goryaninaa.web.Bank.service.client.ClientRepository;
 
 public class AccountService {
@@ -25,16 +30,21 @@ public class AccountService {
 		this.clientRepository = clientRepository;
 	}
 
-	public void open(AccountOpenRequisites requisites) {
-		AccountOpenRequisites enrichedRequisites = enrichAccountRequisites(requisites);
-		int accountNumber = numberCapacityRepository.getNumber();
-		Account account = new Account(enrichedRequisites, accountNumber);
-		Transaction openTransaction = createOpenTransaction(enrichedRequisites, account);
-		accountRepository.save(account);
-		transactionRepository.save(openTransaction);
+	public void open(AccountOpenRequisites requisites) throws AccountOpenException {
+		try {
+			AccountOpenRequisites enrichedRequisites = enrichAccountRequisites(requisites);
+			int accountNumber = numberCapacityRepository.getNumber();
+			Account account = new Account(enrichedRequisites, accountNumber);
+			Transaction openTransaction = createOpenTransaction(enrichedRequisites, account);
+			accountRepository.save(account);
+			transactionRepository.save(openTransaction);
+		} catch (Throwable t) {
+			throw new AccountOpenException(t.getMessage(), t.getCause());
+		}
 	}
 	
-	public void deposit(TransactionRequisites requisites) {
+	public void deposit(TransactionRequisites requisites) throws AccountDepositException {
+		try {
 		Account account = findByNumber(requisites.getAccountRecepient().getNumber());
 		synchronized(account) {
 			TransactionRequisites enrichedRequisites = enrichDepositTransaction(requisites, account);
@@ -44,31 +54,42 @@ public class AccountService {
 			accountRepository.update(account);
 			transactionRepository.save(deposit);
 		}
+		} catch (Throwable t) {
+			throw new AccountDepositException(t.getMessage(), t.getCause());
+		}
 	}
 	
-	public void withdraw(TransactionRequisites requisites) {
-		Account account = findByNumber(requisites.getAccountFrom().getNumber());
-		synchronized(account) {
-			TransactionRequisites enrichedRequisites = enrichWithdrawTransaction(requisites, account);
-			account.withdraw(enrichedRequisites.getAmount());
-			TransactionRequisites completedRequisites = completeWithdrawTransaction(enrichedRequisites, account);
-			Transaction withdraw = new Transaction(completedRequisites);
-			transactionRepository.save(withdraw);
-			accountRepository.update(account);
+	public void withdraw(TransactionRequisites requisites) throws AccountWithdrawException {
+		try {
+			Account account = findByNumber(requisites.getAccountFrom().getNumber());
+			synchronized (account) {
+				TransactionRequisites enrichedRequisites = enrichWithdrawTransaction(requisites, account);
+				account.withdraw(enrichedRequisites.getAmount());
+				TransactionRequisites completedRequisites = completeWithdrawTransaction(enrichedRequisites, account);
+				Transaction withdraw = new Transaction(completedRequisites);
+				transactionRepository.save(withdraw);
+				accountRepository.update(account);
+			}
+		} catch (Throwable t) {
+			throw new AccountWithdrawException(t.getMessage(), t.getCause());
 		}
 	}
 
-	public void transfer(TransactionRequisites requisites) {
-		deposit(requisites);
-		withdraw(requisites);
+	public void transfer(TransactionRequisites requisites) throws AccountTransferException {
+		try {
+			deposit(requisites);
+			withdraw(requisites);
+		} catch (Throwable t) {
+			throw new AccountTransferException(t.getMessage(), t.getCause());
+		}
 	}
 	
-	public Account findByNumber(int number) {
+	public Account findByNumber(int number) throws AccountFindException {
 		Optional<Account> account = accountRepository.findByNumber(number);
 		if (account.isPresent()) {
 			return account.get();
 		} else {
-			throw new IllegalArgumentException("There is no account with such number");
+			throw new AccountFindException("There is no account with such number");
 		}
 	}
 	

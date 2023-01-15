@@ -8,12 +8,18 @@ import java.util.Optional;
 import com.goryaninaa.web.Bank.DTO.AccountDTO;
 import com.goryaninaa.web.Bank.DTO.AccountOpenRequisitesDTO;
 import com.goryaninaa.web.Bank.DTO.ClientDTO;
+import com.goryaninaa.web.Bank.DTO.ErrorDTO;
 import com.goryaninaa.web.Bank.DTO.TransactionDTO;
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
 import com.goryaninaa.web.Bank.model.transaction.Transaction;
 import com.goryaninaa.web.Bank.model.transaction.TransactionRequisites;
 import com.goryaninaa.web.Bank.service.account.AccountService;
+import com.goryaninaa.web.Bank.service.account.exception.AccountDepositException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountFindException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountOpenException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountTransferException;
+import com.goryaninaa.web.Bank.service.account.exception.AccountWithdrawException;
 import com.goryaninaa.web.HttpServer.entity.HttpRequest;
 import com.goryaninaa.web.HttpServer.entity.HttpResponse;
 import com.goryaninaa.web.HttpServer.requesthandler.Controller;
@@ -35,29 +41,53 @@ public class AccountController implements Controller {
 	@PostMapping("/open")
 	public Response open(HttpRequest request, AccountOpenRequisitesDTO requisitesDTO) {
 		AccountOpenRequisites accountRequisites = requisitesDTO.extractAccountRequisites();
-		accountService.open(accountRequisites);
-		return new HttpResponse(HttpResponseCode.OK);
+		try {
+			accountService.open(accountRequisites);
+			return new HttpResponse(HttpResponseCode.OK);
+		} catch (AccountOpenException e) {
+			e.printStackTrace();
+			HttpResponse httpResponse = prepareResponse(e);
+			return httpResponse;
+		}
 	}
-	
+
 	@PostMapping("/deposit")
 	public Response deposit(HttpRequest request, TransactionDTO transactionDTO) {
 		TransactionRequisites requisites = transactionDTO.extractTransactionRequisites();
-		accountService.deposit(requisites);
-		return new HttpResponse(HttpResponseCode.OK);
+		try {
+			accountService.deposit(requisites);
+			return new HttpResponse(HttpResponseCode.OK);
+		} catch (AccountDepositException e) {
+			e.printStackTrace();
+			HttpResponse httpResponse = prepareResponse(e);
+			return httpResponse;
+		}
 	}
 	
 	@PostMapping("/withdraw")
 	public Response withdraw(HttpRequest request, TransactionDTO transactionDTO) {
 		TransactionRequisites requisites = transactionDTO.extractTransactionRequisites();
-		accountService.withdraw(requisites);
-		return new HttpResponse(HttpResponseCode.OK);
+		try {
+			accountService.withdraw(requisites);
+			return new HttpResponse(HttpResponseCode.OK);
+		} catch (AccountWithdrawException e) {
+			e.printStackTrace();
+			HttpResponse httpResponse = prepareResponse(e);
+			return httpResponse;
+		}
 	}
 	
 	@PostMapping("/transfer")
 	public Response transfer(HttpRequest request, TransactionDTO transactionDTO) {
 		TransactionRequisites requisites = transactionDTO.extractTransactionRequisites();
-		accountService.transfer(requisites);
-		return new HttpResponse(HttpResponseCode.OK);
+		try {
+			accountService.transfer(requisites);
+			return new HttpResponse(HttpResponseCode.OK);
+		} catch (AccountTransferException e) {
+			e.printStackTrace();
+			HttpResponse httpResponse = prepareResponse(e);
+			return httpResponse;
+		}
 	}
 	
 	@GetMapping("/view")
@@ -67,8 +97,23 @@ public class AccountController implements Controller {
 			Account account = accountService.findByNumber(Integer.valueOf(accountNumberString.get()));
 			AccountDTO responseAccountDTO = prepareAccountDTO(account);
 			return new HttpResponse(HttpResponseCode.OK, responseAccountDTO);
-		} catch (IllegalArgumentException e) {
-			return new HttpResponse(HttpResponseCode.NOTFOUND);
+		} catch (AccountFindException e) {
+			e.printStackTrace();
+			HttpResponse httpResponse = prepareResponse(e);
+			return httpResponse;
+		}
+	}
+	
+	private HttpResponse prepareResponse(Exception e) {
+		Throwable cause = e.getCause();
+		if (cause instanceof IllegalArgumentException) {
+			ErrorDTO errorDTO = new ErrorDTO(404, e.getMessage());
+			HttpResponse httpResponse = new HttpResponse(HttpResponseCode.NOTFOUND, errorDTO);
+			return httpResponse;
+		} else {
+			ErrorDTO errorDTO = new ErrorDTO(500, e.getMessage());
+			HttpResponse httpResponse = new HttpResponse(HttpResponseCode.INTERNALSERVERERROR, errorDTO);
+			return httpResponse;
 		}
 	}
 	
