@@ -46,3 +46,9 @@ tmp/
 local.properties
 .loadpath
 .factorypath
+
+##############################
+## IDEA
+##############################
+.idea
+*.iml
