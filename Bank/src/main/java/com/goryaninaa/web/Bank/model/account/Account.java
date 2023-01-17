@@ -7,20 +7,20 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.goryaninaa.web.Bank.model.client.Client;
-import com.goryaninaa.web.Bank.model.transaction.Transaction;
+import com.goryaninaa.web.Bank.model.operation.Operation;
 
 //TODO add unit test
 public class Account implements Comparable<Account> {
 
 	private int id;
-	private int lastTransactionNumber;
+	private int lastOperationNumber;
 	private int balance;
 	private int number;
 	private State state;
 	private LocalDateTime openedAt;
 	private LocalDateTime closedAt;
 	private Client owner;
-	private List<Transaction> history = new ArrayList<>();
+	private List<Operation> history = new ArrayList<>();
 	private AccountType type;
 	private int term;
 	private LocalDate prolongationDate; 
@@ -34,11 +34,11 @@ public class Account implements Comparable<Account> {
 	
 	public Account(AccountOpenRequisites requisites, int number) {
 		setLastTransactionNumber(1);
-		setBalance(requisites.getTransaction().getAmount());
+		setBalance(requisites.getOperation().getAmount());
 		setNumber(number);
 		setState(State.OPENED);
 		setOpenedAt(LocalDateTime.now());
-		setOwner(requisites.getTransaction().getClient());
+		setOwner(requisites.getOperation().getClient());
 		setType(requisites.getAccountType());
 		setTerm(requisites.getTerm());
 		setProlongationDate(openedAt.toLocalDate().plusMonths(term));
@@ -46,13 +46,13 @@ public class Account implements Comparable<Account> {
 	
 	public void deposit(int amount) {
 		balance += Math.abs(amount);
-		lastTransactionNumber++;
+		lastOperationNumber++;
 	}
 
 	public void withdraw(int amount) {
 		if (balance - Math.abs(amount) > 0) {
 			balance -= Math.abs(amount);
-			lastTransactionNumber++;
+			lastOperationNumber++;
 		} else {
 			throw new RuntimeException("Insufficient funds");
 		}
@@ -78,12 +78,12 @@ public class Account implements Comparable<Account> {
 		this.id = id;
 	}
 
-	public int getLastTransactionNumber() {
-		return lastTransactionNumber;
+	public int getLastOperationNumber() {
+		return lastOperationNumber;
 	}
 
 	public void setLastTransactionNumber(int lastTransactionNumber) {
-		this.lastTransactionNumber = lastTransactionNumber;
+		this.lastOperationNumber = lastTransactionNumber;
 	}
 
 	public int getBalance() {
@@ -134,11 +134,11 @@ public class Account implements Comparable<Account> {
 		this.owner = owner;
 	}
 
-	public List<Transaction> getHistory() {
+	public List<Operation> getHistory() {
 		return history;
 	}
 
-	public void setHistory(List<Transaction> history) {
+	public void setHistory(List<Operation> history) {
 		this.history = history;
 	}
 
@@ -166,14 +166,14 @@ public class Account implements Comparable<Account> {
 		this.prolongationDate = prolongationDate;
 	}
 
-	public void addTransaction(Transaction transaction) {
+	public void addTransaction(Operation transaction) {
 		history.add(transaction);
-		history.sort(Comparator.comparing(Transaction::getHistoryNumber));
+		history.sort(Comparator.comparing(Operation::getHistoryNumber));
 	}
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", transactionNumber=" + lastTransactionNumber + ", balance=" + balance + ", number="
+		return "Product [id=" + id + ", transactionNumber=" + lastOperationNumber + ", balance=" + balance + ", number="
 				+ number + ", state=" + state + ", openedAt=" + openedAt + ", closedAt=" + closedAt
 				+ ", client=" + owner;
 	}

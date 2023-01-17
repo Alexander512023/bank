@@ -17,7 +17,7 @@ public class AccountDTO {
 	private LocalDateTime openedAt;
 	private LocalDateTime closedAt;
 	private ClientDTO owner;
-	private List<TransactionDTO> historyDTO;
+	private List<OperationDTO> historyDTO;
 	private AccountType type;
 	private int term;
 	private LocalDate prolongationDate;
@@ -29,8 +29,8 @@ public class AccountDTO {
 		this.number = account.getNumber();
 	}
 
-	public AccountDTO(Account account, List<TransactionDTO> historyDTO, ClientDTO owner) {
-		this.lastTransactionNumber = account.getLastTransactionNumber();
+	public AccountDTO(Account account, List<OperationDTO> historyDTO, ClientDTO owner) {
+		this.lastTransactionNumber = account.getLastOperationNumber();
 		this.balance = account.getBalance();
 		this.number = account.getNumber();
 		this.state = account.getState();
@@ -99,11 +99,11 @@ public class AccountDTO {
 		this.owner = owner;
 	}
 
-	public List<TransactionDTO> getHistoryDTO() {
+	public List<OperationDTO> getHistoryDTO() {
 		return historyDTO;
 	}
 
-	public void setHistoryDTO(List<TransactionDTO> historyDTO) {
+	public void setHistoryDTO(List<OperationDTO> historyDTO) {
 		this.historyDTO = historyDTO;
 	}
 

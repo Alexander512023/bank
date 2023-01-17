@@ -1,9 +1,9 @@
-package com.goryaninaa.web.Bank.model.transaction;
+package com.goryaninaa.web.Bank.model.operation;
 
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.client.Client;
 
-public class TransactionRequisites {
+public class OperationRequisites {
 	
 	private int amount;
 	private int balanceBefore;
@@ -13,13 +13,21 @@ public class TransactionRequisites {
 	private Account accountRecepient;
 	private Client client;
 	private ServiceInitiator service;
-	private TransactionType transactionType;
+	private OperationType transactionType;
 	private int historyNumber;
 
-	public TransactionRequisites() {
+	public OperationRequisites() {
 		
 	}
 
+	public void enrich(Account account, Client client) {
+		this.setAccount(account);
+		this.setAccountRecepient(account);
+		this.setClient(client);
+		this.setBalanceAfter(account.getBalance());
+		this.setHistoryNumber(account.getLastOperationNumber());
+	}
+	
 	public int getAmount() {
 		return amount;
 	}
@@ -84,11 +92,11 @@ public class TransactionRequisites {
 		this.service = service;
 	}
 
-	public TransactionType getTransactionType() {
+	public OperationType getOperationType() {
 		return transactionType;
 	}
 
-	public void setTransactionType(TransactionType transactionType) {
+	public void setOperationType(OperationType transactionType) {
 		this.transactionType = transactionType;
 	}
 

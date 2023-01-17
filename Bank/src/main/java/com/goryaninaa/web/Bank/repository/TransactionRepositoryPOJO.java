@@ -3,10 +3,10 @@ package com.goryaninaa.web.Bank.repository;
 import java.util.List;
 
 import com.goryaninaa.web.Bank.DAOConcurentStub.TransactionDAO;
-import com.goryaninaa.web.Bank.model.transaction.Transaction;
-import com.goryaninaa.web.Bank.service.account.TransactionRepository;
+import com.goryaninaa.web.Bank.model.operation.Operation;
+import com.goryaninaa.web.Bank.service.account.OperationRepository;
 
-public class TransactionRepositoryPOJO implements TransactionRepository {
+public class TransactionRepositoryPOJO implements OperationRepository {
 
 	private final TransactionDAO transactionDAO;
 	
@@ -15,12 +15,12 @@ public class TransactionRepositoryPOJO implements TransactionRepository {
 	}
 
 	@Override
-	public void save(Transaction transaction) {
+	public void save(Operation transaction) {
 		transactionDAO.save(transaction);
 	}
 
 	@Override
-	public List<Transaction> findTransactionsOfAccount(int accountId) {
+	public List<Operation> findTransactionsOfAccount(int accountId) {
 		return transactionDAO.findTransactionsOfAccount(accountId);
 	}
 

@@ -1,4 +1,4 @@
-package com.goryaninaa.web.Bank.model.transaction;
+package com.goryaninaa.web.Bank.model.operation;
 
 public enum ServiceInitiator {
 	

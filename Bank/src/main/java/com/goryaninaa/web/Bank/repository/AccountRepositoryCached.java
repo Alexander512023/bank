@@ -6,9 +6,9 @@ import java.util.Optional;
 
 import com.goryaninaa.web.Bank.DAOConcurentStub.AccountDAO;
 import com.goryaninaa.web.Bank.model.account.Account;
-import com.goryaninaa.web.Bank.model.transaction.Transaction;
+import com.goryaninaa.web.Bank.model.operation.Operation;
 import com.goryaninaa.web.Bank.service.account.AccountRepository;
-import com.goryaninaa.web.Bank.service.account.TransactionRepository;
+import com.goryaninaa.web.Bank.service.account.OperationRepository;
 import com.goryaninaa.web.Cache.Cache;
 import com.goryaninaa.web.Cache.CacheKey;
 import com.goryaninaa.web.Cache.CacheKeyFactory;
@@ -18,10 +18,10 @@ public class AccountRepositoryCached implements AccountRepository {
 	private final Cache<Account> cache;
 	private final CacheKeyFactory cacheKeyFactory;
 	private final AccountDAO accountDAO;
-	private final TransactionRepository transactionRepository;
+	private final OperationRepository transactionRepository;
 	
 	public AccountRepositoryCached(Cache<Account> cache, AccountDAO accountDAO,
-			TransactionRepository transactionRepository, CacheKeyFactory cacheKeyFactory) {
+			OperationRepository transactionRepository, CacheKeyFactory cacheKeyFactory) {
 		this.cache = cache;
 		this.cacheKeyFactory = cacheKeyFactory;
 		this.accountDAO = accountDAO;
@@ -40,8 +40,8 @@ public class AccountRepositoryCached implements AccountRepository {
 		CacheKey cacheKey = cacheKeyFactory.generateCacheKey(number, AccountAccessStrategyType.NUMBER);
 		Optional<Account> account = cache.getData(cacheKey);
 		if (account.isPresent()) {
-			List<Transaction> transactions = transactionRepository.findTransactionsOfAccount(account.get().getId());
-			transactions.sort(Comparator.comparing(Transaction::getHistoryNumber));
+			List<Operation> transactions = transactionRepository.findTransactionsOfAccount(account.get().getId());
+			transactions.sort(Comparator.comparing(Operation::getHistoryNumber));
 			account.get().setHistory(transactions);
 		}
 		return account;

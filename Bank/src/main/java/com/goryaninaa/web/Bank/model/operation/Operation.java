@@ -1,4 +1,4 @@
-package com.goryaninaa.web.Bank.model.transaction;
+package com.goryaninaa.web.Bank.model.operation;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.client.Client;
 
-public class Transaction implements Comparable<Transaction> {
+public class Operation implements Comparable<Operation> {
 	
 	private int id;
 	private int amount;
@@ -18,33 +18,33 @@ public class Transaction implements Comparable<Transaction> {
 	private Account accountRecepient;
 	private Client client;
 	private ServiceInitiator service;
-	private TransactionType transactionType;
+	private OperationType operationType;
 	private int historyNumber;
 	
-	public Transaction() {
+	public Operation() {
 	}
 	
 	//Open account with this constructor
-	public Transaction(int amount, Client client, ServiceInitiator service) {
+	public Operation(int amount, Client client, ServiceInitiator service) {
 		setAmount(amount);
 		setBalanceBefore(0);
 		setBalanceAfter(amount);
 		setPerformedAt(LocalDateTime.now());
 		setClient(client);
 		setService(service);
-		setTransactionType(TransactionType.DEPOSIT);
+		setOperationType(OperationType.DEPOSIT);
 		setHistoryNumber(1);
 	}
 	
-	//Standard transaction constructor
-	public Transaction(TransactionRequisites requisites) {
+	//Standard operation constructor
+	public Operation(OperationRequisites requisites) {
 		setAmount(requisites.getAmount());
 		setBalanceBefore(requisites.getBalanceBefore());
 		setBalanceAfter(requisites.getBalanceAfter());
 		setPerformedAt(LocalDateTime.now());
 		setClient(requisites.getClient());
 		setService(requisites.getService());
-		setTransactionType(requisites.getTransactionType());
+		setOperationType(requisites.getOperationType());
 		setHistoryNumber(requisites.getHistoryNumber());
 		
 		defineAccounts(requisites);
@@ -52,7 +52,7 @@ public class Transaction implements Comparable<Transaction> {
 	}
 
 	@Override
-	public int compareTo(Transaction that) {
+	public int compareTo(Operation that) {
 		if (this.historyNumber < that.historyNumber) {
 			return 1;
 		} else if (this.historyNumber == that.historyNumber) {
@@ -142,12 +142,12 @@ public class Transaction implements Comparable<Transaction> {
 		this.service = service;
 	}
 
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public OperationType getOperationType() {
+		return operationType;
 	}
 
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setOperationType(OperationType operationType) {
+		this.operationType = operationType;
 	}
 
 	public int getHistoryNumber() {
@@ -171,13 +171,13 @@ public class Transaction implements Comparable<Transaction> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Transaction other = (Transaction) obj;
+		Operation other = (Operation) obj;
 		return id == other.id && amount == other.amount && historyNumber == other.historyNumber && Objects.equals(account, other.account);
 	}
 	
-	private void defineAccounts(TransactionRequisites requisites) {
+	private void defineAccounts(OperationRequisites requisites) {
 		setAccount(requisites.getAccount());
-		switch (transactionType) {
+		switch (operationType) {
 		case DEPOSIT:
 			setAccountRecepient(requisites.getAccountRecepient());
 			break;

@@ -2,12 +2,12 @@ package com.goryaninaa.web.Bank.service.account;
 
 import java.util.List;
 
-import com.goryaninaa.web.Bank.model.transaction.Transaction;
+import com.goryaninaa.web.Bank.model.operation.Operation;
 
-public interface TransactionRepository {
+public interface OperationRepository {
 
-	void save(Transaction transaction);
+	void save(Operation transaction);
 	
-	List<Transaction> findTransactionsOfAccount(int accountId);
+	List<Operation> findTransactionsOfAccount(int accountId);
 
 }

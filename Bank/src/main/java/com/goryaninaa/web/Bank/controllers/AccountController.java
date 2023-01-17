@@ -9,17 +9,12 @@ import com.goryaninaa.web.Bank.DTO.AccountDTO;
 import com.goryaninaa.web.Bank.DTO.AccountOpenRequisitesDTO;
 import com.goryaninaa.web.Bank.DTO.ClientDTO;
 import com.goryaninaa.web.Bank.DTO.ErrorDTO;
-import com.goryaninaa.web.Bank.DTO.TransactionDTO;
+import com.goryaninaa.web.Bank.DTO.OperationDTO;
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
-import com.goryaninaa.web.Bank.model.transaction.Transaction;
-import com.goryaninaa.web.Bank.model.transaction.TransactionRequisites;
+import com.goryaninaa.web.Bank.model.operation.Operation;
+import com.goryaninaa.web.Bank.model.operation.OperationRequisites;
 import com.goryaninaa.web.Bank.service.account.AccountService;
-import com.goryaninaa.web.Bank.service.account.exception.AccountDepositException;
-import com.goryaninaa.web.Bank.service.account.exception.AccountFindException;
-import com.goryaninaa.web.Bank.service.account.exception.AccountOpenException;
-import com.goryaninaa.web.Bank.service.account.exception.AccountTransferException;
-import com.goryaninaa.web.Bank.service.account.exception.AccountWithdrawException;
 import com.goryaninaa.web.HttpServer.entity.HttpRequest;
 import com.goryaninaa.web.HttpServer.entity.HttpResponse;
 import com.goryaninaa.web.HttpServer.requesthandler.Controller;
@@ -44,48 +39,48 @@ public class AccountController implements Controller {
 		try {
 			accountService.open(accountRequisites);
 			return new HttpResponse(HttpResponseCode.OK);
-		} catch (AccountOpenException e) {
-			e.printStackTrace();
-			HttpResponse httpResponse = prepareResponse(e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			HttpResponse httpResponse = prepareResponseOnException(t);
 			return httpResponse;
 		}
 	}
 
 	@PostMapping("/deposit")
-	public Response deposit(HttpRequest request, TransactionDTO transactionDTO) {
-		TransactionRequisites requisites = transactionDTO.extractTransactionRequisites();
+	public Response deposit(HttpRequest request, OperationDTO operationDTO) {
+		OperationRequisites requisites = operationDTO.extractOperationRequisites();
 		try {
 			accountService.deposit(requisites);
 			return new HttpResponse(HttpResponseCode.OK);
-		} catch (AccountDepositException e) {
-			e.printStackTrace();
-			HttpResponse httpResponse = prepareResponse(e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			HttpResponse httpResponse = prepareResponseOnException(t);
 			return httpResponse;
 		}
 	}
 	
 	@PostMapping("/withdraw")
-	public Response withdraw(HttpRequest request, TransactionDTO transactionDTO) {
-		TransactionRequisites requisites = transactionDTO.extractTransactionRequisites();
+	public Response withdraw(HttpRequest request, OperationDTO operationDTO) {
+		OperationRequisites requisites = operationDTO.extractOperationRequisites();
 		try {
 			accountService.withdraw(requisites);
 			return new HttpResponse(HttpResponseCode.OK);
-		} catch (AccountWithdrawException e) {
-			e.printStackTrace();
-			HttpResponse httpResponse = prepareResponse(e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			HttpResponse httpResponse = prepareResponseOnException(t);
 			return httpResponse;
 		}
 	}
 	
 	@PostMapping("/transfer")
-	public Response transfer(HttpRequest request, TransactionDTO transactionDTO) {
-		TransactionRequisites requisites = transactionDTO.extractTransactionRequisites();
+	public Response transfer(HttpRequest request, OperationDTO operationDTO) {
+		OperationRequisites requisites = operationDTO.extractOperationRequisites();
 		try {
 			accountService.transfer(requisites);
 			return new HttpResponse(HttpResponseCode.OK);
-		} catch (AccountTransferException e) {
-			e.printStackTrace();
-			HttpResponse httpResponse = prepareResponse(e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			HttpResponse httpResponse = prepareResponseOnException(t);
 			return httpResponse;
 		}
 	}
@@ -97,34 +92,34 @@ public class AccountController implements Controller {
 			Account account = accountService.findByNumber(Integer.valueOf(accountNumberString.get()));
 			AccountDTO responseAccountDTO = prepareAccountDTO(account);
 			return new HttpResponse(HttpResponseCode.OK, responseAccountDTO);
-		} catch (AccountFindException e) {
-			e.printStackTrace();
-			HttpResponse httpResponse = prepareResponse(e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			HttpResponse httpResponse = prepareResponseOnException(t);
 			return httpResponse;
 		}
 	}
 	
-	private HttpResponse prepareResponse(Exception e) {
-		Throwable cause = e.getCause();
+	private HttpResponse prepareResponseOnException(Throwable t) {
+		Throwable cause = t.getCause();
 		if (cause instanceof IllegalArgumentException) {
-			ErrorDTO errorDTO = new ErrorDTO(404, e.getMessage());
+			ErrorDTO errorDTO = new ErrorDTO(404, t.getMessage());
 			HttpResponse httpResponse = new HttpResponse(HttpResponseCode.NOTFOUND, errorDTO);
 			return httpResponse;
 		} else {
-			ErrorDTO errorDTO = new ErrorDTO(500, e.getMessage());
+			ErrorDTO errorDTO = new ErrorDTO(500, t.getMessage());
 			HttpResponse httpResponse = new HttpResponse(HttpResponseCode.INTERNALSERVERERROR, errorDTO);
 			return httpResponse;
 		}
 	}
 	
 	private AccountDTO prepareAccountDTO(Account account) {
-		List<Transaction> transactions = account.getHistory();
-		List<TransactionDTO> transactionsDTO = new ArrayList<>();
+		List<Operation> operations = account.getHistory();
+		List<OperationDTO> operationsDTO = new ArrayList<>();
 		ClientDTO clientDTO = new ClientDTO(account.getOwner());
-		for (Transaction transaction : transactions) {
-			transactionsDTO.add(new TransactionDTO(transaction, clientDTO));
+		for (Operation operation : operations) {
+			operationsDTO.add(new OperationDTO(operation, clientDTO));
 		}
-		transactionsDTO.sort(Comparator.comparing(TransactionDTO::getHistoryNumber).reversed());
-		return new AccountDTO(account, transactionsDTO, clientDTO);
+		operationsDTO.sort(Comparator.comparing(OperationDTO::getHistoryNumber).reversed());
+		return new AccountDTO(account, operationsDTO, clientDTO);
 	}
 }

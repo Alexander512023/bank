@@ -5,12 +5,12 @@ import java.util.Optional;
 
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.client.Client;
-import com.goryaninaa.web.Bank.model.transaction.ServiceInitiator;
-import com.goryaninaa.web.Bank.model.transaction.Transaction;
-import com.goryaninaa.web.Bank.model.transaction.TransactionRequisites;
-import com.goryaninaa.web.Bank.model.transaction.TransactionType;
+import com.goryaninaa.web.Bank.model.operation.Operation;
+import com.goryaninaa.web.Bank.model.operation.OperationRequisites;
+import com.goryaninaa.web.Bank.model.operation.ServiceInitiator;
+import com.goryaninaa.web.Bank.model.operation.OperationType;
 
-public class TransactionDTO implements Comparable<TransactionDTO> {
+public class OperationDTO implements Comparable<OperationDTO> {
 	
 	private int amount;
 	private int balanceBefore;
@@ -20,33 +20,33 @@ public class TransactionDTO implements Comparable<TransactionDTO> {
 	private Integer accountRecepientNumber;
 	private ClientDTO clientDTO;
 	private ServiceInitiator service;
-	private TransactionType transactionType;
+	private OperationType operationType;
 	private int historyNumber;
 	
-	public TransactionDTO() {
+	public OperationDTO() {
 	}
 	
-	public TransactionDTO(Transaction transaction, ClientDTO clientDTO) {
-		this.amount = transaction.getAmount();
-		this.performedAt = transaction.getPerformedAt();
-		this.historyNumber = transaction.getHistoryNumber();
-		this.transactionType = transaction.getTransactionType();
+	public OperationDTO(Operation operation, ClientDTO clientDTO) {
+		this.amount = operation.getAmount();
+		this.performedAt = operation.getPerformedAt();
+		this.historyNumber = operation.getHistoryNumber();
+		this.operationType = operation.getOperationType();
 		this.clientDTO = clientDTO;
-		this.service = transaction.getService();
-		this.balanceBefore = transaction.getBalanceBefore();
-		this.balanceAfter = transaction.getBalanceAfter();
-		Optional<Account> accountFrom = Optional.ofNullable(transaction.getAccountFrom());
+		this.service = operation.getService();
+		this.balanceBefore = operation.getBalanceBefore();
+		this.balanceAfter = operation.getBalanceAfter();
+		Optional<Account> accountFrom = Optional.ofNullable(operation.getAccountFrom());
 		if (accountFrom.isPresent()) {
-			this.accountFromNumber = transaction.getAccountFrom().getNumber();
+			this.accountFromNumber = operation.getAccountFrom().getNumber();
 		}
-		Optional<Account> accountRecepient = Optional.ofNullable(transaction.getAccountRecepient());
+		Optional<Account> accountRecepient = Optional.ofNullable(operation.getAccountRecepient());
 		if (accountRecepient.isPresent()) {
-			this.accountRecepientNumber = transaction.getAccountRecepient().getNumber();
+			this.accountRecepientNumber = operation.getAccountRecepient().getNumber();
 		}
 	}
 	
-	public TransactionRequisites extractTransactionRequisites() {
-		TransactionRequisites requisites = new TransactionRequisites();
+	public OperationRequisites extractOperationRequisites() {
+		OperationRequisites requisites = new OperationRequisites();
 		
 		requisites.setAmount(amount);
 		Optional<Integer> accountFrom = Optional.ofNullable(accountFromNumber);
@@ -59,14 +59,14 @@ public class TransactionDTO implements Comparable<TransactionDTO> {
 		}
 		requisites.setClient(new Client(clientDTO.getPassport()));
 		requisites.setService(service);
-		requisites.setTransactionType(transactionType);
+		requisites.setOperationType(operationType);
 		requisites.setHistoryNumber(historyNumber);
 		
 		return requisites;
 	}
 
 	@Override
-	public int compareTo(TransactionDTO that) {
+	public int compareTo(OperationDTO that) {
 		if (this.historyNumber < that.historyNumber) {
 			return 1;
 		} else if (this.historyNumber == that.historyNumber) {
@@ -125,12 +125,12 @@ public class TransactionDTO implements Comparable<TransactionDTO> {
 		this.service = service;
 	}
 
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public OperationType getOperationType() {
+		return operationType;
 	}
 
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setOperationType(OperationType operationType) {
+		this.operationType = operationType;
 	}
 
 	public int getHistoryNumber() {
