@@ -143,7 +143,7 @@ public class AccountService {
 		if (account.isPresent()) {
 			return account.get();
 		} else {
-			throw new AccountFindException("There is no account with such number");
+			throw new AccountFindException("There is no account with such number", new IllegalArgumentException());
 		}
 	}
 }
