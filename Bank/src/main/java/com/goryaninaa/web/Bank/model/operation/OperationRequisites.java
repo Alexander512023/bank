@@ -13,21 +13,42 @@ public class OperationRequisites {
 	private Account accountRecepient;
 	private Client client;
 	private ServiceInitiator service;
-	private OperationType transactionType;
+	private OperationType operationType;
 	private int historyNumber;
 
 	public OperationRequisites() {
 		
 	}
+	
+	public OperationRequisites(int amount, ServiceInitiator service, Client client) {
+		this.amount = amount;
+		this.service = service;
+		this.client = client;
+	}
 
-	public void enrich(Account account, Client client) {
+	public void enrich(Account account, Client client, OperationType operationType) {
 		this.setAccount(account);
 		this.setAccountRecepient(account);
 		this.setClient(client);
 		this.setBalanceAfter(account.getBalance());
 		this.setHistoryNumber(account.getLastOperationNumber());
+		this.setOperationType(operationType);
+		defineBalanceBefore(operationType, amount, balanceAfter);
 	}
 	
+	private void defineBalanceBefore(OperationType operationType, int amount, int balanceAfter) {
+		switch (operationType) {
+		case DEPOSIT:
+			this.setBalanceBefore(balanceAfter - amount);
+			break;
+		case WITHDRAW:
+			this.setBalanceBefore(balanceAfter + Math.abs(amount));
+			break;
+		default:
+			break;
+		}
+	}
+
 	public int getAmount() {
 		return amount;
 	}
@@ -93,11 +114,11 @@ public class OperationRequisites {
 	}
 
 	public OperationType getOperationType() {
-		return transactionType;
+		return operationType;
 	}
 
-	public void setOperationType(OperationType transactionType) {
-		this.transactionType = transactionType;
+	public void setOperationType(OperationType operationType) {
+		this.operationType = operationType;
 	}
 
 	public int getHistoryNumber() {

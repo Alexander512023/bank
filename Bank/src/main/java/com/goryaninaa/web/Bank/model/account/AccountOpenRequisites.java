@@ -1,28 +1,28 @@
 package com.goryaninaa.web.Bank.model.account;
 
-import com.goryaninaa.web.Bank.model.operation.Operation;
+import com.goryaninaa.web.Bank.model.operation.OperationRequisites;
 
 public class AccountOpenRequisites {
-	private Operation transaction;
+	private OperationRequisites operationRequisites;
 	private AccountType accountType;
 	private int term;
 	
 	public AccountOpenRequisites() {
 	}
 
-	public AccountOpenRequisites(Operation transaction, AccountType accountType, int term) {
+	public AccountOpenRequisites(OperationRequisites operationRequisites, AccountType accountType, int term) {
 		super();
-		this.transaction = transaction;
+		this.operationRequisites = operationRequisites;
 		this.accountType = accountType;
 		this.term = term;
 	}
 
-	public Operation getOperation() {
-		return transaction;
+	public OperationRequisites getOperationRequisites() {
+		return operationRequisites;
 	}
 
-	public void setTransaction(Operation transaction) {
-		this.transaction = transaction;
+	public void setOperationRequisites(OperationRequisites operationRequisites) {
+		this.operationRequisites = operationRequisites;
 	}
 
 	public AccountType getAccountType() {

@@ -3,7 +3,7 @@ package com.goryaninaa.web.Bank.DTO;
 import com.goryaninaa.web.Bank.model.account.AccountOpenRequisites;
 import com.goryaninaa.web.Bank.model.account.AccountType;
 import com.goryaninaa.web.Bank.model.client.Client;
-import com.goryaninaa.web.Bank.model.operation.Operation;
+import com.goryaninaa.web.Bank.model.operation.OperationRequisites;
 import com.goryaninaa.web.Bank.model.operation.ServiceInitiator;
 
 public class AccountOpenRequisitesDTO {
@@ -20,7 +20,7 @@ public class AccountOpenRequisitesDTO {
 	
 	public AccountOpenRequisites extractAccountRequisites() {
 		Client client = new Client(clientDTO.getPassport());
-		Operation transaction = new Operation(amount, client, service);
+		OperationRequisites transaction = new OperationRequisites(amount, service, client);
 		
 		return new AccountOpenRequisites(transaction, accountType, term);
 	}

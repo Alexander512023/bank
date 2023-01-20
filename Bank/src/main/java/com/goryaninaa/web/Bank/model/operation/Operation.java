@@ -46,9 +46,7 @@ public class Operation implements Comparable<Operation> {
 		setService(requisites.getService());
 		setOperationType(requisites.getOperationType());
 		setHistoryNumber(requisites.getHistoryNumber());
-		
 		defineAccounts(requisites);
-		System.out.println();
 	}
 
 	@Override

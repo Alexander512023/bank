@@ -34,11 +34,11 @@ public class Account implements Comparable<Account> {
 	
 	public Account(AccountOpenRequisites requisites, int number) {
 		setLastTransactionNumber(1);
-		setBalance(requisites.getOperation().getAmount());
+		setBalance(requisites.getOperationRequisites().getAmount());
 		setNumber(number);
 		setState(State.OPENED);
 		setOpenedAt(LocalDateTime.now());
-		setOwner(requisites.getOperation().getClient());
+		setOwner(requisites.getOperationRequisites().getClient());
 		setType(requisites.getAccountType());
 		setTerm(requisites.getTerm());
 		setProlongationDate(openedAt.toLocalDate().plusMonths(term));

@@ -23,6 +23,8 @@ import com.goryaninaa.web.Bank.repository.NumberCapacityRepositoryPOJO;
 import com.goryaninaa.web.Bank.repository.TransactionRepositoryPOJO;
 import com.goryaninaa.web.Bank.service.account.AccountRepository;
 import com.goryaninaa.web.Bank.service.account.AccountService;
+import com.goryaninaa.web.Bank.service.operation.OperationService;
+import com.goryaninaa.web.Bank.service.requisite.RequisiteService;
 import com.goryaninaa.web.Cache.Cache;
 import com.goryaninaa.web.Cache.CacheKeyFactory;
 import com.goryaninaa.web.Cache.DataAccessStrategy;
@@ -62,8 +64,10 @@ public class App {
 			ClientRepositoryPOJO clientRepository = new ClientRepositoryPOJO(clientDAO);
 			NumberCapacityRepositoryPOJO numberCapacityRepository = new NumberCapacityRepositoryPOJO(numberCapacity);
 			
-			AccountService accountService = new AccountService(accountRepository, transactionRepository,
-					numberCapacityRepository, clientRepository);
+			RequisiteService requisiteService = new RequisiteService(clientRepository);
+			OperationService operationService = new OperationService(requisiteService, transactionRepository);
+			AccountService accountService = new AccountService(accountRepository, operationService,
+					numberCapacityRepository, requisiteService);
 			Controller accountController = new AccountController(accountService);
 	
 			List<Controller> controllers = new ArrayList<>();

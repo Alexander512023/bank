@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.goryaninaa.web.Bank.DAOConcurentStub.TransactionDAO;
 import com.goryaninaa.web.Bank.model.operation.Operation;
-import com.goryaninaa.web.Bank.service.account.OperationRepository;
+import com.goryaninaa.web.Bank.service.operation.OperationRepository;
 
 public class TransactionRepositoryPOJO implements OperationRepository {
 
@@ -20,7 +20,7 @@ public class TransactionRepositoryPOJO implements OperationRepository {
 	}
 
 	@Override
-	public List<Operation> findTransactionsOfAccount(int accountId) {
+	public List<Operation> findOperationsOfAccount(int accountId) {
 		return transactionDAO.findTransactionsOfAccount(accountId);
 	}
 

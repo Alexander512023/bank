@@ -8,7 +8,7 @@ import com.goryaninaa.web.Bank.DAOConcurentStub.AccountDAO;
 import com.goryaninaa.web.Bank.model.account.Account;
 import com.goryaninaa.web.Bank.model.operation.Operation;
 import com.goryaninaa.web.Bank.service.account.AccountRepository;
-import com.goryaninaa.web.Bank.service.account.OperationRepository;
+import com.goryaninaa.web.Bank.service.operation.OperationRepository;
 import com.goryaninaa.web.Cache.Cache;
 import com.goryaninaa.web.Cache.CacheKey;
 import com.goryaninaa.web.Cache.CacheKeyFactory;
@@ -40,7 +40,7 @@ public class AccountRepositoryCached implements AccountRepository {
 		CacheKey cacheKey = cacheKeyFactory.generateCacheKey(number, AccountAccessStrategyType.NUMBER);
 		Optional<Account> account = cache.getData(cacheKey);
 		if (account.isPresent()) {
-			List<Operation> transactions = transactionRepository.findTransactionsOfAccount(account.get().getId());
+			List<Operation> transactions = transactionRepository.findOperationsOfAccount(account.get().getId());
 			transactions.sort(Comparator.comparing(Operation::getHistoryNumber));
 			account.get().setHistory(transactions);
 		}

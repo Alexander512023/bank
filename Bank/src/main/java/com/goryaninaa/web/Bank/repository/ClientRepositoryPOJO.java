@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import com.goryaninaa.web.Bank.DAOConcurentStub.ClientDAO;
 import com.goryaninaa.web.Bank.model.client.Client;
-import com.goryaninaa.web.Bank.service.client.ClientRepository;
+import com.goryaninaa.web.Bank.service.requisite.ClientRepositoryRequisite;
 
-public class ClientRepositoryPOJO implements ClientRepository {
+public class ClientRepositoryPOJO implements ClientRepositoryRequisite {
 
 	private final ClientDAO clientDAO;
 	
